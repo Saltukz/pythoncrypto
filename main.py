@@ -12,7 +12,7 @@ import requests
 import datetime
 
 import dateutil.parser
-
+from web3 import Web3
 
 from threading import Thread
 
@@ -47,6 +47,12 @@ import gate_api
 import requests
 
 import finplot as fplt
+
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.expected_conditions import presence_of_element_located
 
 
 #GET THE DATA
@@ -120,7 +126,7 @@ fplt.set_y_range(-1.4, +3.7, ax=ax2) # hard-code y-axis range limitation
 fplt.autoviewrestore()
 
 # we're done
-#fplt.show()   
+fplt.show()   
     
 
 
@@ -170,7 +176,7 @@ query_paramgate = 'currency_pair=BTC_USDT'
 intervalgate = 'interval=4h'
 limitgate = 'limit=740'
 
-sgate = "1 Jan, 2021"
+sgate = "1 May, 2021"
 # timegate = time.mktime(datetime.datetime.strptime(s, "%d/%m/%Y").timetuple())
 
 timegate = date_to_miliseconds(sgate)/1000
@@ -188,3 +194,9 @@ c = gateioDataFrame(r)
 
 print(c)
 
+web3 = Web3(Web3.HTTPProvider('https://kovan.infura.io/v3/<infura_project_id>'))
+abi = '[{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"description","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint80","name":"_roundId","type":"uint80"}],"name":"getRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"latestRoundData","outputs":[{"internalType":"uint80","name":"roundId","type":"uint80"},{"internalType":"int256","name":"answer","type":"int256"},{"internalType":"uint256","name":"startedAt","type":"uint256"},{"internalType":"uint256","name":"updatedAt","type":"uint256"},{"internalType":"uint80","name":"answeredInRound","type":"uint80"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"version","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]'
+addr = '0x9326BFA02ADD2366b30bacB125260Af641031331'
+contract = web3.eth.contract(address=addr, abi=abi)
+latestData = contract.functions.latestRoundData().call()
+print(latestData)
